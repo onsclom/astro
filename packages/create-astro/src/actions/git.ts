@@ -26,15 +26,16 @@ export async function git(ctx: Pick<Context, 'cwd' | 'git' | 'yes' | 'prompt' | 
 	if (ctx.dryRun) {
 		await info('--dry-run', `Skipping Git initialization`);
 	} else if (_git) {
-		await spinner({
-			start: 'Git initializing...',
-			end: 'Git initialized',
-			while: () =>
-				init({ cwd: ctx.cwd }).catch((e) => {
-					error('error', e);
-					process.exit(1);
-				}),
-		});
+		return async () =>
+			await spinner({
+				start: 'Git initializing...',
+				end: 'Git initialized',
+				while: () =>
+					init({ cwd: ctx.cwd }).catch((e) => {
+						error('error', e);
+						process.exit(1);
+					}),
+			});
 	} else {
 		await info(
 			ctx.yes === false ? 'git [skip]' : 'Sounds good!',

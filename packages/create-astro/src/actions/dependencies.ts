@@ -24,20 +24,21 @@ export async function dependencies(
 	if (ctx.dryRun) {
 		await info('--dry-run', `Skipping dependency installation`);
 	} else if (deps) {
-		await spinner({
-			start: `Installing dependencies with ${ctx.packageManager}...`,
-			end: 'Dependencies installed',
-			onError: (e) => {
-				error('error', e);
-				error(
-					'error',
-					`Dependencies failed to install, please run ${color.bold(
-						ctx.packageManager + ' install'
-					)} to install them manually after setup.`
-				);
-			},
-			while: () => install({ packageManager: ctx.packageManager, cwd: ctx.cwd }),
-		});
+		return async () =>
+			await spinner({
+				start: `Installing dependencies with ${ctx.packageManager}...`,
+				end: 'Dependencies installed',
+				onError: (e) => {
+					error('error', e);
+					error(
+						'error',
+						`Dependencies failed to install, please run ${color.bold(
+							ctx.packageManager + ' install'
+						)} to install them manually after setup.`
+					);
+				},
+				while: () => install({ packageManager: ctx.packageManager, cwd: ctx.cwd }),
+			});
 	} else {
 		await info(
 			ctx.yes === false ? 'deps [skip]' : 'No problem!',

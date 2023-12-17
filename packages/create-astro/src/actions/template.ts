@@ -32,20 +32,21 @@ export async function template(
 	if (ctx.dryRun) {
 		await info('--dry-run', `Skipping template copying`);
 	} else if (ctx.template) {
-		await spinner({
-			start: 'Template copying...',
-			end: 'Template copied',
-			while: () =>
-				copyTemplate(ctx.template!, ctx as Context).catch((e) => {
-					if (e instanceof Error) {
-						error('error', e.message);
-						process.exit(1);
-					} else {
-						error('error', 'Unable to clone template.');
-						process.exit(1);
-					}
-				}),
-		});
+		return async () =>
+			await spinner({
+				start: 'Template copying...',
+				end: 'Template copied',
+				while: () =>
+					copyTemplate(ctx.template!, ctx as Context).catch((e) => {
+						if (e instanceof Error) {
+							error('error', e.message);
+							process.exit(1);
+						} else {
+							error('error', 'Unable to clone template.');
+							process.exit(1);
+						}
+					}),
+			});
 	} else {
 		ctx.exit(1);
 	}

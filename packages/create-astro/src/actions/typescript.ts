@@ -61,15 +61,16 @@ export async function typescript(ctx: PickedTypeScriptContext) {
 		if (ts === 'relaxed' || ts === 'default') {
 			ts = 'base';
 		}
-		await spinner({
-			start: 'TypeScript customizing...',
-			end: 'TypeScript customized',
-			while: () =>
-				setupTypeScript(ts!, ctx).catch((e) => {
-					error('error', e);
-					process.exit(1);
-				}),
-		});
+		return async () =>
+			await spinner({
+				start: 'TypeScript customizing...',
+				end: 'TypeScript customized',
+				while: () =>
+					setupTypeScript(ts!, ctx).catch((e) => {
+						error('error', e);
+						process.exit(1);
+					}),
+			});
 	} else {
 	}
 }

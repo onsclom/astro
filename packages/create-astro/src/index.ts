@@ -43,12 +43,16 @@ export async function main() {
 
 		// Steps which write to files need to go above git
 		git,
-		next,
 	];
 
+	const taskQueue: (() => Promise<void>)[] = [];
 	for (const step of steps) {
-		await step(ctx);
+		const task = await step(ctx);
+		if (task) taskQueue.push(task);
 	}
+	for (const task of taskQueue) await task();
+	await next(ctx);
+
 	process.exit(0);
 }
 
